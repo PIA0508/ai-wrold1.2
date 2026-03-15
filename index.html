@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>无限叙事</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <div class="fx-layer" id="fxLayer"><div class="weather-fx" id="weatherFx"></div><div class="danger-vignette" id="dangerVignette"></div><div class="scene-transition" id="sceneTransition"></div></div>
+  <div class="dice-overlay" id="diceOverlay"><div class="dice-stage" id="diceStage"></div></div>
+  <div class="save-indicator" id="saveIndicator">💾 已存档</div>
+
+  <!-- 启动 -->
+  <div id="screen-splash" class="screen active">
+    <div class="splash-bg"><div class="particle-field" id="particles"></div>
+      <div class="splash-content">
+        <div class="logo-glow"></div><h1 class="game-title">无限叙事</h1>
+        <p class="game-subtitle">Infinite Narrative</p><p class="game-desc">AI驱动的无限可能世界</p>
+        <button class="btn-primary btn-glow" onclick="UI.goTo('screen-mode-select')"><span>开始旅程</span><div class="btn-shine"></div></button>
+        <button class="btn-text" id="btnLoadSave" style="display:none" onclick="SaveSystem.loadAndResume()">📂 继续上次</button>
+        <div class="splash-footer"><span class="api-status" id="apiStatus">● API</span><button class="btn-text" onclick="UI.showSettings()">⚙ 设置</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模式选择 -->
+  <div id="screen-mode-select" class="screen">
+    <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-splash')">←</button><h2>选择世界</h2><div></div></div>
+    <div class="screen-body">
+      <div class="mode-tabs"><button class="tab active" onclick="UI.switchTab(this,'tab-custom')">自由创造</button><button class="tab" onclick="UI.switchTab(this,'tab-popular')">热门世界观</button></div>
+      <div id="tab-custom" class="tab-content active"><div class="card card-create" onclick="UI.goTo('screen-world-create')"><div class="card-icon">🌌</div><h3>创建自定义世界</h3><p>描述你想象中的世界</p></div></div>
+      <div id="tab-popular" class="tab-content"><div class="popular-grid" id="popularWorlds"></div></div>
+    </div>
+  </div>
+
+  <!-- ★ 世界创建（快速+自定义双模式） -->
+  <div id="screen-world-create" class="screen">
+    <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-mode-select')">←</button><h2>构建世界</h2><div></div></div>
+    <div class="screen-body">
+      <div class="mode-tabs">
+        <button class="tab active" onclick="UI.switchTab(this,'tab-quick-create')">⚡ 快速创建</button>
+        <button class="tab" onclick="UI.switchTab(this,'tab-custom-create')">✏️ 自定义</button>
+      </div>
+      <!-- 快速创建 -->
+      <div id="tab-quick-create" class="tab-content active">
+        <div class="form-section"><label>🌍 世界类型</label><div class="chip-group" id="qGenre">
+          <button class="chip" data-val="西方奇幻">🧙西方奇幻</button><button class="chip" data-val="东方仙侠">🐉东方仙侠</button>
+          <button class="chip" data-val="赛博朋克">🤖赛博朋克</button><button class="chip" data-val="太空歌剧">🚀太空歌剧</button>
+          <button class="chip" data-val="蒸汽朋克">⚙️蒸汽朋克</button><button class="chip" data-val="末日废土">☢️末日废土</button>
+          <button class="chip" data-val="都市悬疑">🔍都市悬疑</button><button class="chip" data-val="哥特恐怖">👻哥特恐怖</button>
+          <button class="chip" data-val="武侠江湖">⚔️武侠江湖</button><button class="chip" data-val="宫廷权谋">👑宫廷权谋</button>
+          <button class="chip" data-val="校园日常">🏫校园日常</button><button class="chip" data-val="海盗冒险">🏴‍☠️海盗冒险</button>
+          <button class="chip" data-val="克苏鲁神话">🐙克苏鲁</button><button class="chip" data-val="童话暗黑">🌹暗黑童话</button>
+        </div></div>
+        <div class="form-section"><label>⏳ 时代背景</label><div class="chip-group" id="qEra">
+          <button class="chip" data-val="远古蛮荒">🦴远古蛮荒</button><button class="chip" data-val="中世纪">🏰中世纪</button>
+          <button class="chip" data-val="古代东方">🏯古代东方</button><button class="chip" data-val="维多利亚">🎩维多利亚</button>
+          <button class="chip" data-val="近现代">🏙️近现代</button><button class="chip" data-val="当代">📱当代</button>
+          <button class="chip" data-val="近未来">🔬近未来</button><button class="chip" data-val="远未来">🌌远未来</button>
+          <button class="chip" data-val="时间混乱">⏰时间混乱</button><button class="chip" data-val="架空历史">📜架空历史</button>
+        </div></div>
+        <div class="form-section"><label>🎭 叙事基调</label><div class="chip-group" id="qTone">
+          <button class="chip" data-val="黑暗压抑">🌑黑暗压抑</button><button class="chip" data-val="热血燃系">🔥热血燃系</button>
+          <button class="chip" data-val="温暖治愈">☀️温暖治愈</button><button class="chip" data-val="悬疑烧脑">🧩悬疑烧脑</button>
+          <button class="chip" data-val="荒诞幽默">🤡荒诞幽默</button><button class="chip" data-val="史诗恢弘">⚡史诗恢弘</button>
+          <button class="chip" data-val="细腻文艺">🌸细腻文艺</button><button class="chip" data-val="残酷写实">💀残酷写实</button>
+        </div></div>
+        <div class="form-section"><label>⚔️ 核心冲突</label><div class="chip-group" id="qConflict">
+          <button class="chip" data-val="善恶对决">善恶对决</button><button class="chip" data-val="生存危机">生存危机</button>
+          <button class="chip" data-val="权力争夺">权力争夺</button><button class="chip" data-val="身份之谜">身份之谜</button>
+          <button class="chip" data-val="复仇之路">复仇之路</button><button class="chip" data-val="禁忌之恋">禁忌之恋</button>
+          <button class="chip" data-val="文明冲突">文明冲突</button><button class="chip" data-val="人性考验">人性考验</button>
+          <button class="chip" data-val="末日求生">末日求生</button><button class="chip" data-val="阴谋揭秘">阴谋揭秘</button>
+          <button class="chip" data-val="命运抗争">命运抗争</button><button class="chip" data-val="信仰崩塌">信仰崩塌</button>
+        </div></div>
+        <div class="form-section"><label>📐 世界规模</label><div class="chip-group" id="qScale">
+          <button class="chip" data-val="一座城">🏘️一座城</button><button class="chip" data-val="一个国家">🗺️一个国家</button>
+          <button class="chip" data-val="整个大陆">🌍整个大陆</button><button class="chip" data-val="星际文明">🌌星际文明</button>
+          <button class="chip" data-val="平行世界">🔀平行世界</button><button class="chip" data-val="密闭空间">🔒密闭空间</button>
+        </div></div>
+        <button class="btn-primary btn-full" onclick="UI.submitQuickCreate()">⚡ 一键生成世界</button>
+      </div>
+      <!-- 自定义创建 -->
+      <div id="tab-custom-create" class="tab-content">
+        <div class="form-section"><label>世界名称</label><input type="text" id="worldName" placeholder="命名..." maxlength="30"></div>
+        <div class="form-section"><label>类型</label><div class="chip-group" id="worldTypeChips"><button class="chip" data-val="奇幻">🧙奇幻</button><button class="chip" data-val="科幻">🚀科幻</button><button class="chip" data-val="现实">🏙️现实</button><button class="chip" data-val="末日">☢️末日</button><button class="chip" data-val="武侠">⚔️武侠</button><button class="chip" data-val="悬疑">🔍悬疑</button><button class="chip" data-val="恐怖">👻恐怖</button><button class="chip" data-val="历史">📜历史</button></div></div>
+        <div class="form-section"><label>描述</label><textarea id="worldDesc" rows="5" placeholder="背景、规则、氛围..."></textarea></div>
+        <div class="form-section"><label>核心冲突<span class="hint">（可选）</span></label><textarea id="worldConflict" rows="3" placeholder="矛盾或危机"></textarea></div>
+        <button class="btn-primary btn-full" onclick="GameEngine.createWorld()">✨ 生成世界</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 角色选择 -->
+  <div id="screen-character" class="screen">
+    <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-mode-select')">←</button><h2>选择角色</h2><div></div></div>
+    <div class="screen-body">
+      <p class="section-desc">点击查看完整设定，选择你扮演的角色</p>
+      <div id="characterCards" class="character-grid"></div>
+      <div class="divider-text"><span>或者</span></div>
+      <div class="card card-create" onclick="UI.goTo('screen-char-create')"><div class="card-icon">✏️</div><h3>自定义角色</h3></div>
+    </div>
+  </div>
+
+  <!-- 自定义角色 -->
+  <div id="screen-char-create" class="screen">
+    <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-character')">←</button><h2>创建角色</h2><div></div></div>
+    <div class="screen-body">
+      <div class="form-section"><label>角色名</label><input type="text" id="charName" maxlength="20"></div>
+      <div class="form-section"><label>性别</label><div class="chip-group" id="charGenderChips"><button class="chip" data-val="男">男</button><button class="chip" data-val="女">女</button><button class="chip" data-val="其他">其他</button></div></div>
+      <div class="form-section"><label>年龄</label><input type="number" id="charAge" min="1" max="9999"></div>
+      <div class="form-section"><label>身份</label><input type="text" id="charRole" maxlength="30"></div>
+      <div class="form-section"><label>背景</label><textarea id="charBg" rows="4"></textarea></div>
+      <div class="form-section"><label>能力</label><textarea id="charAbility" rows="2"></textarea></div>
+      <button class="btn-primary btn-full" onclick="GameEngine.createCustomCharacter()">🎭 创建</button>
+    </div>
+  </div>
+
+  <!-- 游戏主界面 -->
+  <div id="screen-game" class="screen">
+    <div class="game-topbar">
+      <button class="btn-icon" onclick="UI.toggleSidebar('left')">☰</button>
+      <div class="topbar-center"><span class="world-label" id="gameWorldName"></span><span class="chapter-label" id="gameChapter">危机</span></div>
+      <span class="weather-indicator" id="weatherIndicator" onclick="UI.showModal('modal-map')"></span>
+      <button class="btn-icon" id="btnPause" onclick="GameEngine.togglePause()">⏸</button>
+      <span id="tokenBudget" class="token-budget"></span>
+      <button class="btn-icon" onclick="UI.toggleSidebar('right')">👤</button>
+    </div>
+    <div class="read-progress"><div class="read-progress-bar" id="readProgressBar"></div></div>
+    <div id="sidebar-left" class="sidebar sidebar-left">
+      <div class="sidebar-header"><h3>📖 记忆</h3><button class="btn-icon" onclick="UI.toggleSidebar('left')">✕</button></div>
+      <div class="sidebar-body" id="memoryList"></div>
+    </div>
+    <div id="sidebar-right" class="sidebar sidebar-right">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs"><button class="stab active" onclick="UI.switchSideTab(this,'stab-status')">状态</button><button class="stab" onclick="UI.switchSideTab(this,'stab-relations')">关系</button></div>
+        <button class="btn-icon" onclick="UI.toggleSidebar('right')">✕</button>
+      </div>
+      <div class="sidebar-body">
+        <div id="stab-status" class="stab-content active"><div id="characterStatusList"></div></div>
+        <div id="stab-relations" class="stab-content"><div id="relationshipList"></div></div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="UI.closeSidebars()"></div>
+    <div class="story-flow" id="storyFlow">
+      <div id="storyContent"></div>
+      <div class="typing-indicator" id="typingIndicator" style="display:none"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="typing-text">AI正在构思...</span></div>
+    </div>
+    <div class="game-bottom" id="gameBottom">
+      <div id="choiceArea" class="choice-area"></div>
+      <div id="continueBar" class="continue-bar" style="display:none"><button class="btn-continue" onclick="GameEngine.playerContinue()"><span class="continue-arrow">▼</span> 继续</button></div>
+      <div class="bottom-bar">
+        <input type="text" id="playerInput" placeholder="你的行动...">
+        <button class="btn-icon" id="btnSend" onclick="GameEngine.sendPlayerAction()">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 -->
+  <div id="modal-character" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modalCharName"></h3><button class="btn-icon" onclick="UI.closeModal('modal-character')">✕</button></div><div class="modal-body" id="modalCharBody"></div></div></div>
+  <div id="modal-psyche" class="modal"><div class="modal-content"><div class="modal-header"><h3>🧠 心理</h3><button class="btn-icon" onclick="UI.closeModal('modal-psyche')">✕</button></div><div class="modal-body" id="modalPsycheBody"></div></div></div>
+  <div id="modal-relation" class="modal"><div class="modal-content"><div class="modal-header"><h3 id="modalRelTitle">关系</h3><button class="btn-icon" onclick="UI.closeModal('modal-relation')">✕</button></div><div class="modal-body" id="modalRelBody"></div></div></div>
+  <div id="modal-butterfly" class="modal"><div class="modal-content"><div class="modal-header"><h3>🦋 蝴蝶效应</h3><button class="btn-icon" onclick="UI.closeModal('modal-butterfly')">✕</button></div><div class="modal-body" id="modalButterflyBody"></div></div></div>
+  <div id="modal-lorebook" class="modal"><div class="modal-content"><div class="modal-header"><h3>📖 世界词条</h3><button class="btn-icon" onclick="UI.closeModal('modal-lorebook')">✕</button></div><div class="modal-body" id="modalLorebookBody"></div></div></div>
+  <div id="modal-map" class="modal"><div class="modal-content"><div class="modal-header"><h3>🗺️ 地图</h3><button class="btn-icon" onclick="UI.closeModal('modal-map')">✕</button></div><div class="modal-body" id="modalMapBody"></div></div></div>
+  <div id="modal-settings" class="modal"><div class="modal-content"><div class="modal-header"><h3>⚙ 设置</h3><button class="btn-icon" onclick="UI.closeModal('modal-settings')">✕</button></div><div class="modal-body">
+    <div class="form-section"><label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-..."></div>
+    <div class="form-section"><label>API地址</label><input type="text" id="apiUrlInput" value="https://api.deepseek.com/v1/chat/completions"></div>
+    <div class="form-section"><label>模型</label><select id="modelSelect"><option value="deepseek-chat">deepseek-chat</option><option value="deepseek-reasoner">deepseek-reasoner</option></select></div>
+    <button class="btn-primary btn-full" onclick="Config.save()">保存</button>
+  </div></div></div>
+  <div id="loading-overlay" class="loading-overlay" style="display:none"><div class="loading-spinner"></div><p id="loadingText">生成中...</p><button class="btn-text" style="margin-top:12px;color:var(--no)" onclick="UI.cancelLoading()">✕ 取消</button></div>
+</div>
+<script src="config.js"></script><script src="dice.js"></script><script src="psyche.js"></script>
+<script src="bond.js"></script><script src="butterfly.js"></script><script src="resources.js"></script><script src="traits.js"></script><script src="lorebook.js"></script><script src="weather.js"></script><script src="worldmap.js"></script>
+<script src="memory.js"></script><script src="agent.js"></script><script src="engine.js"></script>
+<script src="ui.js"></script><script src="save.js"></script><script src="app.js"></script>
+</body>
+</html>
