@@ -111,5 +111,9 @@ hideSwipeControls(){document.getElementById('swipeBar')?.remove()},
 // ★ Lorebook
 renderLorebook(){const body=document.getElementById('modalLorebookBody');if(body)body.innerHTML=Lorebook.renderList()},
 
+// ★ 遭遇状态栏
+showEncounterBar(){const c=document.getElementById('encounterBarContainer');if(c)c.innerHTML=EncounterSystem.renderBar()},
+hideEncounterBar(){const c=document.getElementById('encounterBarContainer');if(c)c.innerHTML=''},
+
 initParticles(){const f=document.getElementById('particles');if(!f)return;for(let i=0;i<20;i++){const p=document.createElement('div');p.className='p';const sz=Math.random()*3+1;p.style.width=sz+'px';p.style.height=sz+'px';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*8+4)+'s';p.style.animationDelay=(Math.random()*5)+'s';f.appendChild(p)}}
 };

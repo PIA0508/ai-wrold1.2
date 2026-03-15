@@ -18,7 +18,8 @@
       <div class="splash-content">
         <div class="logo-glow"></div><h1 class="game-title">无限叙事</h1>
         <p class="game-subtitle">Infinite Narrative</p><p class="game-desc">AI驱动的无限可能世界</p>
-        <button class="btn-primary btn-glow" onclick="UI.goTo('screen-mode-select')"><span>开始旅程</span><div class="btn-shine"></div></button>
+        <button class="btn-primary btn-glow" onclick="UI.goTo('screen-mode-select')"><span>冒险模式</span><div class="btn-shine"></div></button>
+        <button class="btn-primary" style="background:linear-gradient(135deg,#ffc857,#ff6b9d);margin-top:8px" onclick="UI.goTo('screen-life-setup')">⏳ 人生模式</button>
         <button class="btn-text" id="btnLoadSave" style="display:none" onclick="SaveSystem.loadAndResume()">📂 继续上次</button>
         <div class="splash-footer"><span class="api-status" id="apiStatus">● API</span><button class="btn-text" onclick="UI.showSettings()">⚙ 设置</button></div>
       </div>
@@ -93,6 +94,48 @@
     </div>
   </div>
 
+  <!-- 人生模式设置 -->
+  <div id="screen-life-setup" class="screen">
+    <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-splash')">←</button><h2>⏳ 人生模式</h2><div></div></div>
+    <div class="screen-body">
+      <p class="section-desc">在AI构建的世界中，体验一个人的完整一生</p>
+      <div class="form-section"><label>🌍 选择世界</label>
+        <div class="chip-group" id="lifeWorld">
+          <button class="chip" data-val="custom" onclick="UI.goTo('screen-world-create');GameEngine._lifeAfterWorld=true">✏️ 自定义世界</button>
+          <button class="chip" data-val="medieval">🏰 中世纪王国</button>
+          <button class="chip" data-val="modern">🏙️ 现代都市</button>
+          <button class="chip" data-val="scifi">🚀 星际时代</button>
+          <button class="chip" data-val="xianxia">🐉 仙侠大陆</button>
+          <button class="chip" data-val="postapoc">☢️ 末日废土</button>
+        </div>
+      </div>
+      <div class="form-section"><label>🏠 出生地</label>
+        <div class="chip-group" id="lifeBirth">
+          <button class="chip" data-val="小镇">🏘️ 偏远小镇</button><button class="chip" data-val="都城">🏙️ 繁华都城</button>
+          <button class="chip" data-val="边境">⛰️ 危险边境</button><button class="chip" data-val="孤岛">🏝️ 与世隔绝</button>
+          <button class="chip" data-val="贫民窟">🏚️ 贫民窟</button><button class="chip" data-val="学院">📚 学院之中</button>
+        </div>
+      </div>
+      <div class="form-section"><label>👨‍👩‍👧 家境</label>
+        <div class="chip-group" id="lifeFamily">
+          <button class="chip" data-val="贫困">🥣 贫困</button><button class="chip" data-val="普通">🏠 普通</button>
+          <button class="chip" data-val="富裕">💎 富裕</button><button class="chip" data-val="权贵">👑 权贵</button>
+        </div>
+      </div>
+      <div class="form-section"><label>✨ 天赋</label>
+        <div class="chip-group" id="lifeTalent">
+          <button class="chip" data-val="聪慧">🧠 聪慧</button><button class="chip" data-val="强壮">💪 强壮</button>
+          <button class="chip" data-val="美貌">🌹 美貌</button><button class="chip" data-val="幸运">🍀 幸运</button>
+          <button class="chip" data-val="艺术">🎨 艺术</button><button class="chip" data-val="领导力">👑 领导力</button>
+        </div>
+      </div>
+      <div class="form-section"><label>📝 角色名</label>
+        <input type="text" id="lifeName" placeholder="你这一生叫什么名字" maxlength="20">
+      </div>
+      <button class="btn-primary btn-full" style="background:linear-gradient(135deg,#ffc857,#ff6b9d)" onclick="GameEngine.startLifeMode()">⏳ 开始这一生</button>
+    </div>
+  </div>
+
   <!-- 角色选择 -->
   <div id="screen-character" class="screen">
     <div class="screen-header"><button class="btn-back" onclick="UI.goTo('screen-mode-select')">←</button><h2>选择角色</h2><div></div></div>
@@ -145,6 +188,7 @@
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="UI.closeSidebars()"></div>
     <div class="story-flow" id="storyFlow">
+      <div id="encounterBarContainer"></div>
       <div id="storyContent"></div>
       <div class="typing-indicator" id="typingIndicator" style="display:none"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="typing-text">AI正在构思...</span></div>
     </div>
@@ -174,7 +218,7 @@
   <div id="loading-overlay" class="loading-overlay" style="display:none"><div class="loading-spinner"></div><p id="loadingText">生成中...</p><button class="btn-text" style="margin-top:12px;color:var(--no)" onclick="UI.cancelLoading()">✕ 取消</button></div>
 </div>
 <script src="config.js"></script><script src="dice.js"></script><script src="psyche.js"></script>
-<script src="bond.js"></script><script src="butterfly.js"></script><script src="resources.js"></script><script src="traits.js"></script><script src="lorebook.js"></script><script src="weather.js"></script><script src="worldmap.js"></script>
+<script src="bond.js"></script><script src="butterfly.js"></script><script src="resources.js"></script><script src="traits.js"></script><script src="lorebook.js"></script><script src="encounter.js"></script><script src="lifemode.js"></script><script src="weather.js"></script><script src="worldmap.js"></script>
 <script src="memory.js"></script><script src="agent.js"></script><script src="engine.js"></script>
 <script src="ui.js"></script><script src="save.js"></script><script src="app.js"></script>
 </body>
